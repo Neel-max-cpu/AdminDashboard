@@ -1,46 +1,46 @@
 import { useState, useEffect } from 'react';
 
 function AdminDashboard({ onLogout }) {
-  const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/admin/users', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-      });
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const handleRoleChange = async (userId, newRole) => {
-    try {
-      const response = await fetch(`http://localhost:5000/admin/user/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ role: newRole }),
-      });
-      if (response.ok) {
-        alert('User role updated successfully');
+    useEffect(() => {
         fetchUsers();
-      } else {
-        alert('Failed to update user role');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+    }, []);
 
-  return (
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/admin/users', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            });
+            const data = await response.json();
+            setUsers(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleRoleChange = async (userId, newRole) => {
+        try {
+            const response = await fetch(`http://localhost:5000/admin/user/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({ role: newRole }),
+            });
+            if (response.ok) {
+                alert('User role updated successfully');
+                fetchUsers();
+            } else {
+                alert('Failed to update user role');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    return (
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
@@ -69,14 +69,15 @@ function AdminDashboard({ onLogout }) {
             </div>
           </div>
         </div>
-      </div>
-      <button
-        onClick={onLogout}
-        className="mt-8 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-      >
-        Logout
-      </button>
-    </div>
+      </div>      
+        <div className='flex justify-center '>
+            <button
+                onClick={onLogout}
+                className="mt-8 bg-red-500 text-white px-4 py-3 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500  focus:ring-opacity-50"
+            >Logout
+            </button>
+        </div>
+    </div >
   );
 }
 

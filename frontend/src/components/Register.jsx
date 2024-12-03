@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [gmail, setGmail] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -12,13 +13,17 @@ function Register() {
       const response = await fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, gmail, password }),
       });
       if (response.ok) {
         alert('Registration successful');
         navigate('/login');
-      } else {
-        alert('Registration failed');
+      }
+      else if(response.status==400){
+        alert('User with that username or gmail already present!')
+      }
+      else if(response.status == 500){
+        alert('Registration failed please check your input or try again later');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -45,6 +50,19 @@ function Register() {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="gmail" className="sr-only">Gmail</label>
+              <input
+                id="gmail"
+                name="gmail"
+                type="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Gmail"
+                value={gmail}
+                onChange={(e) => setGmail(e.target.value)}
               />
             </div>
             <div>

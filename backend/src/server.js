@@ -19,10 +19,19 @@ mongoose.connect('mongodb://localhost:27017/portal', { useNewUrlParser: true, us
 
 // User model
 const UserSchema = new mongoose.Schema({
-  username: String,
-  password: String,
+  username: {type: String, required: true },
+  gmail: {type: String, required: true },
+  password: {type: String,  required: true},
+  
+  // for update and all
   role: { type: String, default: 'user' },
-  info: { type: String, default: '' }
+  
+  // summary, update gmail, phone number, address, country, status(active/inactive)
+  info: { type: String, default: '' },
+  phone: { type: String, default: '' },
+  address: { type: String, default: '' },
+  country: { type: String, default: '' },
+  status: { type: Boolean, default: true},
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -50,6 +59,7 @@ async function createDefaultAdmin() {
         const hashedPassword = await bcrypt.hash('admin', 8);
         const adminUser = new User({
           username: 'admin',
+          gmail:'admin@gmail.com',
           password: hashedPassword,
           role: 'admin'
         });
@@ -66,15 +76,22 @@ createDefaultAdmin();
 
 // Register route
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 8);
-
+  const { username, gmail, password } = req.body;
+  
   try {
-    const user = new User({ username, password: hashedPassword });
+    // checking for repeated account
+    const existingUser = await User.findOne({ $or: [{ username }, { gmail }] });
+    if (existingUser) {
+      return res.status(400).send({ message: 'Username or Gmail already exists' });
+    }
+    
+    // hashed the password
+    const hashedPassword = await bcrypt.hash(password, 8);
+    const user = new User({ username, gmail, password: hashedPassword });
     await user.save();
     res.status(201).send({ message: 'User created successfully' });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -91,15 +108,29 @@ app.post('/login', async (req, res) => {
   res.header('auth-token', token).send({ token, role: user.role });
 });
 
-// User routes
+// User routes -- getting user info
 app.get('/user/info', auth, async (req, res) => {
   const user = await User.findById(req.user._id);
-  res.send({ info: user.info });
+  res.send({ 
+    info: user.info, 
+    gmail:user.gmail,
+    phone:user.phone,
+    address:user.address,
+    country:user.country,
+    status:user.status 
+  });
 });
 
 app.put('/user/info', auth, async (req, res) => {
-  const { info } = req.body;
-  await User.findByIdAndUpdate(req.user._id, { info });
+  const { info, gmail, phone, address, country, status } = req.body;
+  await User.findByIdAndUpdate(req.user._id, {
+     info,
+     gmail, 
+     phone,
+     address, 
+     country, 
+     status, 
+    });
   res.send({ message: 'Info updated successfully' });
 });
 
