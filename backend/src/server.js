@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   address: { type: String, default: '' },
   country: { type: String, default: '' },
-  status: { type: Boolean, default: true},
+  status: { type: Boolean, default: true},  
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -98,14 +98,24 @@ app.post('/register', async (req, res) => {
 // Login route
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (!user) return res.status(400).send('User not found');
-
-  const validPassword = await bcrypt.compare(password, user.password);
-  if (!validPassword) return res.status(400).send('Invalid password');
-
-  const token = jwt.sign({ _id: user._id, role: user.role }, 'neel_hehe');
-  res.header('auth-token', token).send({ token, role: user.role });
+  try{
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).send({ message: 'User not found' });
+    }
+  
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(400).send({ message: 'Invalid password' });
+    }
+  
+    const token = jwt.sign({ _id: user._id, role: user.role }, 'neel_hehe');    
+    res.header('auth-token', token).send({ token, role: user.role });
+  }
+  catch(error){
+    console.error('Error during login:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
 });
 
 // User routes -- getting user info
@@ -117,7 +127,8 @@ app.get('/user/info', auth, async (req, res) => {
     phone:user.phone,
     address:user.address,
     country:user.country,
-    status:user.status 
+    status:user.status,
+    role:user.role,
   });
 });
 
@@ -146,6 +157,22 @@ app.put('/admin/user/:id', auth, async (req, res) => {
   const { role } = req.body;
   await User.findByIdAndUpdate(req.params.id, { role });
   res.send({ message: 'User role updated successfully' });
+});
+
+app.get('/admin/dashboard', auth, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).send('Access denied');
+  
+  const totalUsers = await User.countDocuments()-1;
+  const activeUsers = await User.countDocuments({ status: true })-1;
+  const inactiveUsers = await User.countDocuments({ status: false });
+  const totalSignups = await User.countDocuments()-1;
+
+  res.send({
+    totalUsers,
+    activeUsers,
+    inactiveUsers,
+    totalSignups
+  });
 });
 
 const PORT = process.env.PORT || 5000;
