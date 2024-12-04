@@ -25,6 +25,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+
 // User model
 const UserSchema = new mongoose.Schema({
   username: {type: String, required: true },
@@ -81,6 +82,13 @@ async function createDefaultAdmin() {
 
 // Call the function to create default admin
 createDefaultAdmin();
+
+
+// routes ---
+// default 
+app.get("/",(req, res)=>{
+  res.json({data:"hello"})
+})
 
 // Register route
 app.post('/register', async (req, res) => {
