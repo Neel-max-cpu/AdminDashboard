@@ -64,10 +64,12 @@ npm install
 ```
 
 ### Step 4: Set Up the Environment Variables
-Don't need to create the .env file, just paste your MONGODB_URI, PORT and can change your SECRET_KEY in the server.js, like this:
+Create the .env file, just paste your MONGODB_URI, PORT and can change your SECRET_KEY in the server.js, like this: for deployment or
+can directly paste it in for the local development
 
 ```
 const MONGODB_URI = "mongodb://localhost:27017/portal"
+PORT=5000
 ```
 
 ### Usage
