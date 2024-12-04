@@ -153,13 +153,6 @@ app.get('/admin/users', auth, async (req, res) => {
   res.send(users);
 });
 
-// app.put('/admin/user/:id', auth, async (req, res) => {
-//   if (req.user.role !== 'admin') return res.status(403).send('Access denied');
-//   const { role } = req.body;
-//   await User.findByIdAndUpdate(req.params.id, { role });
-//   res.send({ message: 'User role updated successfully' });
-// });
-
 
 // Update user role or status
 app.put('/admin/user/:id', auth, async (req, res) => {
@@ -181,6 +174,21 @@ app.put('/admin/user/:id', auth, async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 });
+
+app.delete('/admin/user/:id', auth, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).send('Access denied');
+  
+  try {
+    const user = await User.findByIdAndDelete(req.params.id); // Deletes the user by ID
+    if (!user) return res.status(404).send({ message: 'User not found' });
+
+    res.send({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
+
 
 
 app.get('/admin/dashboard', auth, async (req, res) => {
