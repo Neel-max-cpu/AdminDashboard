@@ -1,8 +1,14 @@
 # Admin Dashboard with Role-Based Access Control (RBAC)
 
+# References
+- **Chat GPT**
+- **V0(by vercel)**
+- **YouTube**
+- **Shadcn documentation**
+
 ## Overview
 This project is an Admin Dashboard that enables efficient user management with role-based access control (RBAC). The dashboard allows administrators to manage user accounts, view statistics, and access data visualizations. It includes two roles: Admin and User, each with specific permissions. The interface is fully responsive, ensuring usability across desktop and mobile devices.
-Admin is automatically create with admin as user name and password(using a create admin function - can change accordingly)
+Admin is automatically created with admin as username and password (using a create admin function - can change accordingly)
 
 ## Check the video for the brief of the project without running here  -> [Link](https://youtu.be/XSoNm_SnV0c) ⭐
 
