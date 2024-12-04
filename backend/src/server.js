@@ -14,8 +14,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const MONGODB_URI = "mongodb://localhost:27017/portal"
+
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/portal', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/portal', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // User model
 const UserSchema = new mongoose.Schema({
