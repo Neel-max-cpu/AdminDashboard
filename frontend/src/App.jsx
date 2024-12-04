@@ -32,7 +32,7 @@ function App() {
           <Route
             path="/user"
             element={
-              token && role === 'user' ? (
+              token && (role === 'user' || role==='sde' || role=='intern') ? (
                 <UserDashboard onLogout={handleLogout} />
               ) : (
                 <Navigate to="/login" />
@@ -52,10 +52,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </div>
-    </Router>
-
-    // <AdminDashboard/>
-
+    </Router>    
   )
 }
 

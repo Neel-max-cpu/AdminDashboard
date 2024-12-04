@@ -15,14 +15,17 @@ function Login({ onLogin }) {
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
-      if (response.ok) {
+      if (response.ok) {  
+        console.log(data.token);      
+        console.log(data.role);
         onLogin(data.token, data.role);
         navigate(data.role === 'admin' ? '/admin' : '/user');
       } else {
-        alert('Login failed');
+        alert(data.message);
       }
     } catch (error) {
       console.error('Error:', error);
+      alert('Something went wrong. Please try again.');
     }
   };
 
@@ -41,6 +44,7 @@ function Login({ onLogin }) {
                 id="username"
                 name="username"
                 type="text"
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Username"
@@ -54,6 +58,7 @@ function Login({ onLogin }) {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
@@ -71,7 +76,7 @@ function Login({ onLogin }) {
               Sign in
             </button>
           </div>
-        </form>
+        </form>        
         <div className="text-center">
           <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
             Don't have an account? Register

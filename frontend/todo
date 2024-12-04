@@ -1,10 +1,13 @@
-admin --
+admin -- done(✅)
 Include options to add, edit, or delete users.
 Create a way to define and edit roles.
 Allow roles to include permissions (e.g., Read, Write, Delete) or custom attributes.
-
 do) show total users, active users, inactive users, total signups, ability to delete users, see user info
+
+--- active and inactive not working, deleting a user not working(both done ✅)
 
 user -- done(✅)
 Enable assigning roles to users and managing their status (e.g., Active/Inactive).
 update email, name(full), age, phoneno, address, country, status(active/inactive)
+if user -- can't update email/address/country(✅)
+if intern -- can't update email(✅)
