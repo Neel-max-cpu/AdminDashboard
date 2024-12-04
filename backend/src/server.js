@@ -122,6 +122,7 @@ app.post('/login', async (req, res) => {
 app.get('/user/info', auth, async (req, res) => {
   const user = await User.findById(req.user._id);
   res.send({ 
+    username: user.username,
     info: user.info, 
     gmail:user.gmail,
     phone:user.phone,
@@ -152,12 +153,35 @@ app.get('/admin/users', auth, async (req, res) => {
   res.send(users);
 });
 
+// app.put('/admin/user/:id', auth, async (req, res) => {
+//   if (req.user.role !== 'admin') return res.status(403).send('Access denied');
+//   const { role } = req.body;
+//   await User.findByIdAndUpdate(req.params.id, { role });
+//   res.send({ message: 'User role updated successfully' });
+// });
+
+
+// Update user role or status
 app.put('/admin/user/:id', auth, async (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).send('Access denied');
-  const { role } = req.body;
-  await User.findByIdAndUpdate(req.params.id, { role });
-  res.send({ message: 'User role updated successfully' });
+  
+  const { role, status } = req.body; // Expect both role and status in the request body
+  const updateFields = {};
+
+  if (role) updateFields.role = role;
+  if (status !== undefined) updateFields.status = status; // Ensure status is updated only when provided
+
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, updateFields, { new: true });
+    if (!user) return res.status(404).send({ message: 'User not found' });
+
+    res.send({ message: 'User updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
 });
+
 
 app.get('/admin/dashboard', auth, async (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).send('Access denied');
